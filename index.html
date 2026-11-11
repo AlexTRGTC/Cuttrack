@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#286348">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CutTrack">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>CutTrack — 8 Week Cut</title>
+<style>
+:root{--bg:#f4f5f2;--panel:#fff;--ink:#18221d;--muted:#738078;--line:#e5e9e4;--green:#286348;--green2:#e8f1eb;--orange:#d78a42;--red:#bd5a4b;--shadow:0 8px 30px rgba(25,45,33,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{max-width:1220px;margin:auto;padding:26px 24px 60px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;gap:15px}
+.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border-radius:13px;background:var(--green);color:white;display:grid;place-items:center;font-weight:800;font-size:20px}
+.brand h1{font-size:20px;margin:0;letter-spacing:-.5px}.brand p{margin:1px 0 0;color:var(--muted);font-size:12px}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:white;color:var(--ink);padding:9px 13px;border-radius:10px;font-weight:650;font-size:13px}
+.btn.primary{background:var(--green);border-color:var(--green);color:white}.btn:hover{filter:brightness(.97)}
+.nav{display:flex;gap:6px;overflow:auto;padding:5px;background:#e9ede8;border-radius:13px;margin-bottom:22px}
+.nav button{border:0;background:transparent;color:#647169;padding:10px 15px;border-radius:9px;font-weight:650;white-space:nowrap;font-size:13px}
+.nav button.active{background:white;color:var(--green);box-shadow:0 2px 8px #1d39200d}
+.page{display:none}.page.active{display:block}
+.page-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:8px 0 18px}.page-head h2{margin:0;font-size:25px;letter-spacing:-.8px}.page-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:15px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.stat-label{color:var(--muted);font-size:12px;font-weight:650}.stat-value{font-size:28px;font-weight:780;letter-spacing:-1px;margin:7px 0 2px}.stat-sub{font-size:12px;color:var(--muted)}
+.two{grid-template-columns:1.35fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
+.section-title{font-size:15px;font-weight:750;margin:0 0 13px}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+.progress{height:8px;background:#edf0ec;border-radius:9px;overflow:hidden;margin:10px 0 6px}.progress span{height:100%;display:block;background:var(--green);border-radius:9px}
+.dayrow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);gap:12px}.dayrow:last-child{border:0}
+.tag{display:inline-flex;align-items:center;padding:4px 8px;border-radius:20px;background:var(--green2);color:var(--green);font-size:11px;font-weight:700}.tag.gray{background:#f0f2ef;color:#68736b}.tag.orange{background:#fbf0e4;color:#9a5d21}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:12px;color:var(--muted);font-weight:650}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:white;color:var(--ink);min-width:0}
+.field textarea{min-height:72px;resize:vertical}.field.full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;padding:10px 8px;border-bottom:1px solid var(--line)}td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}tr:last-child td{border-bottom:0}
+table input,table select{border:1px solid var(--line);border-radius:7px;padding:7px;width:100%;min-width:55px}
+.exercise{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(3,minmax(55px,.5fr)) minmax(72px,.6fr) 38px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.exercise:last-child{border:0}.exercise input{width:100%;min-width:0;padding:8px;border:1px solid var(--line);border-radius:8px}.exercise.done .exname{text-decoration:line-through;color:#849087}
+.check{width:20px;height:20px;accent-color:var(--green)}.exname{font-weight:650;font-size:13px}
+.daytabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}.daytabs button{border:1px solid var(--line);background:white;border-radius:9px;padding:8px 12px;font-size:12px;font-weight:700}.daytabs button.active{background:var(--green);color:white;border-color:var(--green)}
+.food-row{display:grid;grid-template-columns:1fr 100px 110px 120px 34px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.food-row input,.food-row select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;min-width:0}
+.delete{border:0;background:transparent;color:#a4aea7;font-size:18px}.delete:hover{color:var(--red)}
+.chart{height:190px;width:100%;display:block}.empty{padding:24px;text-align:center;color:var(--muted);font-size:13px}
+.notice{background:#f5f8f5;border:1px solid #e1ebe3;border-radius:12px;padding:12px 14px;color:#52645a;font-size:12px;margin-top:12px}
+.footer{margin-top:24px;color:#8b968e;font-size:11px;text-align:center}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.shell{padding:17px 13px 40px}.header-actions .btn{padding:8px 9px}.page-head{align-items:start;flex-direction:column}.formgrid{grid-template-columns:1fr 1fr}.exercise{grid-template-columns:minmax(130px,1.4fr) repeat(3,minmax(42px,.5fr)) 36px}.exercise .load{display:none}.food-row{grid-template-columns:1fr 72px 78px 90px 25px}.stats{gap:9px}.card{padding:14px}.stat-value{font-size:24px}}
+
+.syncbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 13px;margin:-10px 0 18px;font-size:12px}
+.syncstate{display:flex;align-items:center;gap:7px;font-weight:700}.syncdot{width:8px;height:8px;border-radius:50%;background:#d78a42;display:inline-block}.syncdot.ok{background:#2f8a5b}.syncdot.off{background:#9aa49d}
+.authpanel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:15px}.authrow{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.authrow .field{flex:1;min-width:160px}.authmsg{font-size:12px;color:var(--muted);margin-top:7px}
+@media(max-width:600px){.shell{padding-top:calc(12px + env(safe-area-inset-top));padding-bottom:calc(32px + env(safe-area-inset-bottom))}.brand h1{font-size:18px}.brand .mark{width:38px;height:38px}.nav{position:sticky;top:0;z-index:10}.nav button{padding:10px 12px}.authrow .field{min-width:100%}.exercise{grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(42px,.55fr)) 30px;gap:5px}.exercise input{padding:8px 4px;font-size:14px}.exercise .exname{font-size:12px}.food-row{grid-template-columns:minmax(0,1fr) 65px 70px 84px 22px;gap:5px}.food-row input,.food-row select{font-size:12px;padding:8px 5px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+ <div class="brand"><div class="mark">C</div><div><h1>CutTrack</h1><p>Eight-week home cut · Personal tracker</p></div></div>
+ <div class="header-actions">
+  <button class="btn" id="exportBtn">Export backup</button>
+  <button class="btn" id="importBtn">Import backup</button><input id="importFile" type="file" accept="application/json" hidden>
+ </div>
+</header>
+<div class="syncbar"><div class="syncstate"><span class="syncdot off" id="syncDot"></span><span id="syncText">Local mode · Sign in to sync between devices</span></div><span id="syncTime" class="small"></span></div>
+<div class="authpanel" id="authPanel">
+ <div class="authrow" id="authFields">
+  <div class="field"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="username" placeholder="Your email address"></div>
+  <div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password"></div>
+  <button class="btn primary" id="signInBtn">Sign in</button><button class="btn" id="signUpBtn">Create account</button>
+ </div>
+ <div class="authrow" id="signedInRow" hidden><strong id="signedInEmail"></strong><button class="btn" id="signOutBtn">Sign out</button></div>
+ <div class="authmsg" id="authMessage">Sign in on your iPhone and computer with the same account to share your CutTrack records. Your app remains usable locally if you temporarily lose internet.</div>
+</div>
+<nav class="nav" id="nav">
+ <button class="active" data-page="dashboard">Dashboard</button><button data-page="training">Training</button><button data-page="food">Food diary</button><button data-page="weight">Weight</button><button data-page="activity">Activity</button><button data-page="settings">Settings</button>
+</nav>
+
+<section class="page active" id="dashboard">
+ <div class="page-head"><div><h2>Today at a glance</h2><p id="todayLabel"></p></div><div class="field" style="min-width:155px"><label for="dashDate">Viewing date</label><input type="date" id="dashDate"></div></div>
+ <div class="grid stats">
+  <div class="card"><div class="stat-label">Current weight</div><div class="stat-value" id="sWeight">98.0 kg</div><div class="stat-sub" id="sWeightSub">Starting point</div></div>
+  <div class="card"><div class="stat-label">Food consumed</div><div class="stat-value" id="sFood">0</div><div class="stat-sub" id="sFoodSub">kcal logged today</div></div>
+  <div class="card"><div class="stat-label">Estimated calories burned</div><div class="stat-value" id="sBurn">2,370</div><div class="stat-sub">Baseline + recorded activity</div></div>
+  <div class="card"><div class="stat-label">Estimated balance</div><div class="stat-value" id="sBalance">—</div><div class="stat-sub">Burn minus food consumed</div></div>
+ </div>
+ <div class="grid two">
+  <div class="card"><h3 class="section-title">Today's plan</h3><div id="todayPlan"></div><div class="actions"><button class="btn primary" onclick="showPage('training')">Open workout</button><button class="btn" onclick="showPage('activity')">Log activity</button></div></div>
+  <div class="card"><h3 class="section-title">Eight-week progress</h3><div style="display:flex;justify-content:space-between"><span class="muted small">Core sessions completed</span><strong id="sessionCount">0 / 40</strong></div><div class="progress"><span id="sessionBar" style="width:0%"></span></div><div class="dayrow"><span class="muted">Weight change</span><strong id="weightChange">—</strong></div><div class="dayrow"><span class="muted">Target rate</span><strong>~0.5 kg / week</strong></div><div class="dayrow"><span class="muted">Programme dates</span><strong>9 Nov – 3 Jan</strong></div></div>
+ </div>
+ <div class="grid two" style="margin-top:14px">
+  <div class="card"><h3 class="section-title">Food today</h3><div id="todayFood"></div><div class="actions"><button class="btn" onclick="showPage('food')">Open food diary</button></div></div>
+  <div class="card"><h3 class="section-title">Weekly training</h3><div id="weeklyProgress"></div></div>
+ </div>
+ <div class="notice">Calorie burn figures are estimates, not measurements. The 2,370 kcal baseline is the programme's starting estimate; activity estimates are added separately. Use weight trends over several weeks rather than reacting to one day's scale reading.</div>
+</section>
+
+<section class="page" id="training">
+ <div class="page-head"><div><h2>Training programme</h2><p>Tick exercises as completed and record the load used. Strength progression counts completed sessions.</p></div><span class="tag">40 core sessions</span></div>
+ <div class="daytabs" id="workoutTabs"></div>
+ <div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3 class="section-title" id="workoutTitle">Workout A</h3><div class="small" id="workoutSub">Monday · 35 minutes · 3 × 12 / 10 / 8</div></div><div class="field" style="min-width:150px"><label>Date</label><input type="date" id="workoutDate"></div></div>
+  <div id="exerciseList" style="margin-top:12px"></div>
+  <div class="actions"><button class="btn primary" id="completeWorkout">Mark session complete</button><button class="btn" id="resetWorkout">Reset checkboxes</button></div>
+  <div class="notice" id="workoutNote">A strength session counts towards the 40-session target when all six exercises are marked complete. Record weights as you go.</div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="section-title">Weekly schedule</h3><div id="schedule"></div></div>
+</section>
+
+<section class="page" id="food">
+ <div class="page-head"><div><h2>Food diary</h2><p>Log meals, snacks and drinks. Planned items do not count as consumed until you change their status.</p></div></div>
+ <div class="card">
+  <div class="formgrid">
+   <div class="field"><label>Date</label><input type="date" id="foodDate"></div>
+   <div class="field"><label>Daily intake target (kcal)</label><input type="number" id="intakeTarget" min="0" step="25"></div>
+   <div class="field"><label>Daily food total</label><input id="foodTotal" disabled value="0 kcal"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 5px"><h3 class="section-title" style="margin:0">Entries</h3><button class="btn primary" id="addFood">+ Add food</button></div>
+  <div id="foodEntries"></div>
+  <div class="notice">Use ChatGPT to estimate calories from a meal description or photograph, then enter the estimate here. Keep portions and preparation details as accurate as possible.</div>
+ </div>
+</section>
+
+<section class="page" id="weight">
+ <div class="page-head"><div><h2>Weight tracking</h2><p>Daily weigh-ins and the overall trend. Weigh under similar conditions where possible.</p></div></div>
+ <div class="grid three">
+  <div class="card"><div class="stat-label">Starting weight</div><div class="stat-value" id="wStart">98.0 kg</div></div>
+  <div class="card"><div class="stat-label">Latest weight</div><div class="stat-value" id="wLatest">—</div></div>
+  <div class="card"><div class="stat-label">Change from start</div><div class="stat-value" id="wChange">—</div></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="section-title">Log a weigh-in</h3><div class="formgrid"><div class="field"><label>Date</label><input type="date" id="weightDate"></div><div class="field"><label>Weight (kg)</label><input type="number" id="weightValue" step=".1" min="0" placeholder="e.g. 97.6"></div><div class="field" style="justify-content:end"><button class="btn primary" id="saveWeight">Save weigh-in</button></div></div></div>
+ <div class="card" style="margin-top:14px"><h3 class="section-title">Weight trend</h3><canvas class="chart" id="weightChart"></canvas><div id="weightRows"></div></div>
+</section>
+
+<section class="page" id="activity">
+ <div class="page-head"><div><h2>Activity log</h2><p>Walking, running and strength activity feed into your estimated daily burn.</p></div></div>
+ <div class="card">
+  <div class="formgrid">
+   <div class="field"><label>Date</label><input type="date" id="activityDate"></div>
+   <div class="field"><label>Family / outdoor walk (minutes)</label><input type="number" id="familyMinutes" min="0" step="5"></div>
+   <div class="field"><label>Walking speed (km/h)</label><input type="number" id="familySpeed" min="0" step=".1"></div>
+   <div class="field"><label>Treadmill walk (minutes)</label><input type="number" id="treadmillMinutes" min="0" step="5"></div>
+   <div class="field"><label>Treadmill speed (km/h)</label><input type="number" id="treadmillSpeed" min="0" step=".1"></div>
+   <div class="field"><label>Run distance (km)</label><input type="number" id="runKm" min="0" step=".1"></div>
+   <div class="field"><label>Run completed?</label><select id="runDone"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+   <div class="field"><label>Strength session</label><select id="strengthDone"><option value="No">Not completed</option><option value="Yes">Completed</option></select></div>
+   <div class="field"><label>Estimated activity calories</label><input id="activityBurn" disabled></div>
+  </div>
+  <div class="actions"><button class="btn primary" id="saveActivity">Save activity</button></div>
+  <div class="notice">Walking estimate: distance × bodyweight × 0.67. Running estimate: distance × bodyweight × 0.95. Strength estimate: 210 kcal per completed core session. These are rough estimates and can overstate or understate actual expenditure.</div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3 class="section-title">Recent activity</h3><div id="activityRows"></div></div>
+</section>
+
+<section class="page" id="settings">
+ <div class="page-head"><div><h2>Settings</h2><p>Adjust your profile and programme assumptions. Changes are saved locally.</p></div></div>
+ <div class="card">
+  <h3 class="section-title">Profile & targets</h3>
+  <div class="formgrid">
+   <div class="field"><label>Starting weight (kg)</label><input id="setStartWeight" type="number" step=".1"></div>
+   <div class="field"><label>Height (cm)</label><input id="setHeight" type="number"></div>
+   <div class="field"><label>Age</label><input id="setAge" type="number"></div>
+   <div class="field"><label>Baseline daily burn (kcal)</label><input id="setBaseline" type="number" step="25"></div>
+   <div class="field"><label>Daily intake target (kcal)</label><input id="setTarget" type="number" step="25"></div>
+   <div class="field"><label>Programme start date</label><input id="setStartDate" type="date"></div>
+  </div>
+  <div class="actions"><button class="btn primary" id="saveSettings">Save settings</button></div>
+ </div>
+ <div class="card" style="margin-top:14px">
+  <h3 class="section-title">Your data</h3><p class="small">Your records are saved on this device and synchronised to your private CutTrack account when online. Export a JSON backup whenever you want an independent copy.</p>
+  <div class="actions"><button class="btn" id="exportBtn2">Export backup</button><button class="btn" id="importBtn2">Import backup</button><button class="btn" id="clearData" style="color:var(--red)">Clear all app data</button></div>
+ </div>
+</section>
+<div class="footer">CutTrack · Personal training and nutrition tracker · Offline entries sync when your connection returns</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL='https://zbpswrazoqddqpuuemiu.supabase.co';
+const SUPABASE_KEY='sb_publishable_3UfHadA5LB2h9wMbiMvQ2g_zMvu_93U';
+const cloud=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+let currentUser=null,cloudReady=false,syncTimer=null,lastCloudUpdatedAt=null,localDirty=false,syncing=false,remoteChannel=null;
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(Number(n)||0).toLocaleString('en-GB');
+const today=()=>new Date().toLocaleDateString('en-CA');
+const addDays=(d,n)=>{let x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);return x.toLocaleDateString('en-CA')};
+const workouts={
+ A:{day:'Monday',name:'Workout A',items:['Deadlifts','Bent-over barbell row','Barbell bench press','Split squats','Biceps curls','Weighted crunches']},
+ B:{day:'Wednesday',name:'Workout B',items:['Romanian deadlifts','Barbell bench press','Barbell hip thrusts','Underhand barbell row','Hammer curls','Weighted crunches']},
+ C:{day:'Friday',name:'Workout C',items:['Barbell glute bridges','Close-grip bench press','Bent-over barbell row','Reverse lunges','Biceps curls','Sit-ups']},
+ D:{day:'Saturday',name:'Workout D · Optional',items:['Incline dumbbell press','Romanian deadlifts','Biceps curls','Split squats','Bent-over barbell row','Dumbbell lateral raises','Weighted crunches']}
+};
+const defaults={
+ profile:{startWeight:98,height:189,age:38,baseline:2370,target:1820,startDate:'2026-11-09'},
+ weights:[],foods:[
+ {date:'2026-11-09',name:'Coffee with milk',qty:'3 cups',kcal:75,status:'Consumed'},
+ {date:'2026-11-09',name:'4-egg frittata with ham, feta, peppers and milk',qty:'1 serving',kcal:435,status:'Consumed'},
+ {date:'2026-11-09',name:'Beer',qty:'3 × 330 ml',kcal:420,status:'Consumed'},
+ {date:'2026-11-09',name:'Chicken thighs',qty:'3',kcal:525,status:'Consumed'},
+ {date:'2026-11-09',name:'Peanut butter satay sauce',qty:'1 serving',kcal:225,status:'Consumed'},
+ {date:'2026-11-09',name:'Stir-fried vegetables',qty:'1 serving',kcal:125,status:'Consumed'},
+ {date:'2026-11-10',name:'Coffee with milk',qty:'2 cups',kcal:50,status:'Consumed'},
+ {date:'2026-11-10',name:'Flax and chia seed wraps',qty:'2',kcal:300,status:'Consumed'},
+ {date:'2026-11-10',name:'Chicken breast',qty:'1 breast',kcal:250,status:'Consumed'},
+ {date:'2026-11-10',name:'Cheddar',qty:'1 tbsp',kcal:55,status:'Consumed'},
+ {date:'2026-11-10',name:'Mayonnaise',qty:'1 tbsp',kcal:100,status:'Consumed'},
+ {date:'2026-11-10',name:'Lettuce',qty:'Sprinkle',kcal:5,status:'Consumed'},
+ {date:'2026-11-10',name:'Coffee with milk',qty:'1 cup',kcal:25,status:'Consumed'},
+ {date:'2026-11-10',name:'Crumbed pork neck steaks',qty:'2 small',kcal:600,status:'Consumed'},
+ {date:'2026-11-10',name:'Potato salad with yoghurt dressing',qty:'1 potato serving',kcal:200,status:'Consumed'},
+ {date:'2026-11-10',name:'Tomato, lettuce and cucumber salad',qty:'1 serving',kcal:50,status:'Consumed'},
+ {date:'2026-11-10',name:'Double gin and tonic (zero-cal tonic / sparkling water)',qty:'4 doubles',kcal:410,status:'Planned'}
+ ],
+ activities:{
+ '2026-11-09':{familyMinutes:0,familySpeed:4,treadmillMinutes:90,treadmillSpeed:5,runKm:5,runDone:'No',strengthDone:'No'},
+ '2026-11-10':{familyMinutes:30,familySpeed:4,treadmillMinutes:60,treadmillSpeed:5,runKm:5,runDone:'No',strengthDone:'No'}
+ },
+ exercises:{},sessionDone:{}
+};
+let data=load();
+function load(){try{let x=JSON.parse(localStorage.getItem('cuttrack_v1'));return x?{...structuredClone(defaults),...x,profile:{...defaults.profile,...x.profile}}:structuredClone(defaults)}catch(e){return structuredClone(defaults)}}
+function setSyncState(message,state='off',time=''){ $('syncText').textContent=message; $('syncDot').className='syncdot '+(state==='ok'?'ok':state==='off'?'off':''); $('syncTime').textContent=time; }
+function save(){localStorage.setItem('cuttrack_v1',JSON.stringify(data));renderDashboard();localDirty=true;if(currentUser)queueCloudSave()}
+function queueCloudSave(){clearTimeout(syncTimer);syncTimer=setTimeout(pushCloudData,700)}
+async function pushCloudData(){
+ if(!currentUser||!navigator.onLine||syncing||!localDirty)return;
+ syncing=true;setSyncState('Synchronising…','');
+ try{
+  const {data:remote,error:readError}=await cloud.from('cuttrack_data').select('payload,updated_at').eq('user_id',currentUser.id).maybeSingle();
+  if(readError)throw readError;
+  if(remote&&lastCloudUpdatedAt&&remote.updated_at!==lastCloudUpdatedAt){
+   const keepLocal=confirm('CutTrack has newer changes from your other device. Your current entries are safely saved on this device. Press OK to keep this device’s changes and update the cloud, or Cancel to load the newer cloud version.');
+   if(keepLocal){lastCloudUpdatedAt=remote.updated_at;}else{data={...structuredClone(defaults),...remote.payload,profile:{...defaults.profile,...(remote.payload.profile||{})}};localDirty=false;lastCloudUpdatedAt=remote.updated_at;localStorage.setItem('cuttrack_v1',JSON.stringify(data));renderAll();setSyncState('Loaded the newer cloud version','ok');syncing=false;return;}
+  }
+  const {data:written,error}=await cloud.from('cuttrack_data').upsert({user_id:currentUser.id,payload:data},{onConflict:'user_id'}).select('updated_at').single();
+  if(error)throw error;lastCloudUpdatedAt=written.updated_at;localDirty=false;
+  setSyncState('Synced across your devices','ok','Updated '+new Date(written.updated_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}));
+ }catch(e){setSyncState(navigator.onLine?'Sync pending · will retry':'Offline · saved on this device','off');}
+ finally{syncing=false;}
+}
+async function loadCloudData(){
+ if(!currentUser||!navigator.onLine)return;
+ setSyncState('Checking your cloud records…','');
+ const {data:remote,error}=await cloud.from('cuttrack_data').select('payload,updated_at').eq('user_id',currentUser.id).maybeSingle();
+ if(error)throw error;
+ if(remote){data={...structuredClone(defaults),...remote.payload,profile:{...defaults.profile,...(remote.payload.profile||{})}};lastCloudUpdatedAt=remote.updated_at;localDirty=false;localStorage.setItem('cuttrack_v1',JSON.stringify(data));renderAll();setSyncState('Synced across your devices','ok','Last update '+new Date(remote.updated_at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));}
+ else{localDirty=true;await pushCloudData();}
+}
+function renderAll(){renderSchedule();renderDashboard();renderWorkout();if($('foodDate').value)renderFood();if($('weightDate').value)renderWeight();if($('activityDate').value)renderActivityForm();}
+async function refreshCloudIfSafe(){if(!currentUser||!navigator.onLine||localDirty)return;try{await loadCloudData()}catch(e){setSyncState('Offline or sync unavailable · local data retained','off')}}
+async function handleAuth(session){
+ currentUser=session?.user||null;
+ $('authFields').hidden=!!currentUser;$('signedInRow').hidden=!currentUser;$('signedInEmail').textContent=currentUser?.email||'';
+ if(currentUser){$('authMessage').textContent='Signed in. Your records are shared with any device using this same account.';if(!navigator.onLine){setSyncState('Offline · saved on this device; sync will resume online','off');return}try{await loadCloudData();if(remoteChannel)cloud.removeChannel(remoteChannel);remoteChannel=cloud.channel('cuttrack-sync').on('postgres_changes',{event:'UPDATE',schema:'public',table:'cuttrack_data',filter:'user_id=eq.'+currentUser.id},payload=>{if(!localDirty){data={...structuredClone(defaults),...payload.new.payload,profile:{...defaults.profile,...(payload.new.payload.profile||{})}};lastCloudUpdatedAt=payload.new.updated_at;localStorage.setItem('cuttrack_v1',JSON.stringify(data));renderAll();setSyncState('Updated from your other device','ok')}}).subscribe();}catch(e){setSyncState('Could not sync · local data retained','off')}}
+ else{lastCloudUpdatedAt=null;setSyncState('Local mode · Sign in to sync between devices','off');$('authMessage').textContent='You are signed out. Your local records remain on this device; sign in to synchronise.'}
+}
+$('signInBtn').onclick=async()=>{let email=$('authEmail').value.trim(),password=$('authPassword').value;if(!email||!password){$('authMessage').textContent='Enter your email and password.';return}setSyncState('Signing in…','');let {data,error}=await cloud.auth.signInWithPassword({email,password});$('authMessage').textContent=error?.message||'Signed in.';if(!error)await handleAuth(data.session)};
+$('signUpBtn').onclick=async()=>{let email=$('authEmail').value.trim(),password=$('authPassword').value;if(!email||password.length<8){$('authMessage').textContent='Enter an email and a password of at least 8 characters.';return}setSyncState('Creating account…','');let {data,error}=await cloud.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});$('authMessage').textContent=error?.message||(data.session?'Account created.':'Account created. Check your email for a confirmation link, then sign in.');if(data.session)await handleAuth(data.session)};
+$('signOutBtn').onclick=async()=>{await cloud.auth.signOut();await handleAuth(null)};
+cloud.auth.onAuthStateChange((_event,session)=>{if(session?.user?.id!==currentUser?.id)setTimeout(()=>handleAuth(session),0)});
+window.addEventListener('online',()=>{if(currentUser){if(localDirty)queueCloudSave();else refreshCloudIfSafe()}});
+window.addEventListener('focus',refreshCloudIfSafe);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshCloudIfSafe()});
+function dateWeight(d){let w=data.weights.filter(x=>x.date<=d).sort((a,b)=>b.date.localeCompare(a.date));return w[0]?.kg??data.profile.startWeight}
+function activityFor(d){return data.activities[d]||{familyMinutes:0,familySpeed:4,treadmillMinutes:0,treadmillSpeed:5,runKm:5,runDone:'No',strengthDone:'No'}}
+function burnFor(d){
+ let a=activityFor(d),kg=dateWeight(d);
+ let walk=((+a.familyMinutes||0)*(+a.familySpeed||0)/60+(+a.treadmillMinutes||0)*(+a.treadmillSpeed||0)/60)*kg*.67;
+ let run=(a.runDone==='Yes'?(+a.runKm||0)*kg*.95:0);
+ let strength=(a.strengthDone==='Yes'?210:0);
+ return {walk,run,strength,total:+data.profile.baseline+walk+run+strength};
+}
+function foodTotals(d){let f=data.foods.filter(x=>x.date===d);return {consumed:f.filter(x=>x.status==='Consumed').reduce((s,x)=>s+(+x.kcal||0),0),planned:f.filter(x=>x.status==='Planned').reduce((s,x)=>s+(+x.kcal||0),0),items:f}}
+function dateDiff(d1,d2){return Math.floor((new Date(d2+'T12:00:00')-new Date(d1+'T12:00:00'))/86400000)}
+function weekOf(d){return Math.max(1,Math.min(8,Math.floor(dateDiff(data.profile.startDate,d)/7)+1))}
+function dayKey(d){let day=new Date(d+'T12:00:00').getDay();return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day]}
+function planFor(d){let day=dayKey(d);return day==='Monday'?['Strength','A']:day==='Wednesday'?['Strength','B']:day==='Friday'?['Strength','C']:day==='Tuesday'||day==='Thursday'?['Run','5 km']:day==='Saturday'?['Optional','D']:['Rest','Recovery']}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));if(p==='training')renderWorkout();if(p==='food')renderFood();if(p==='weight')renderWeight();if(p==='activity')renderActivityForm();if(p==='settings')renderSettings()}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function renderDashboard(){
+ let d=$('dashDate').value||today(),ft=foodTotals(d),burn=burnFor(d),balance=burn.total-ft.consumed;
+ $('todayLabel').textContent=new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ $('sWeight').textContent=dateWeight(d).toFixed(1)+' kg';let first=data.weights.slice().sort((a,b)=>a.date.localeCompare(b.date))[0];$('sWeightSub').textContent=first?((dateWeight(d)-data.profile.startWeight).toFixed(1)+' kg from start'):'Starting point: '+data.profile.startWeight+' kg';
+ $('sFood').textContent=fmt(ft.consumed);$('sFoodSub').textContent=ft.planned?fmt(ft.planned)+' kcal planned additionally':'kcal logged today';$('sBurn').textContent=fmt(burn.total);$('sBalance').textContent=(balance>=0?'+':'')+fmt(balance);$('sBalance').style.color=balance>=0?'var(--green)':'var(--red)';
+ let plan=planFor(d),phtml=plan[0]==='Strength'?`<div class="dayrow"><div><strong>${workouts[plan[1]].name}</strong><div class="small">35 minutes · 6 exercises · 3 × 12 / 10 / 8</div></div><span class="tag">Strength</span></div>`:plan[0]==='Run'?`<div class="dayrow"><div><strong>Run · approximately 5 km</strong><div class="small">Adjust pace for heat and recovery</div></div><span class="tag">Run</span></div>`:plan[0]==='Optional'?`<div class="dayrow"><div><strong>Optional Workout D</strong><div class="small">Additional strength session; does not count towards 40 core sessions</div></div><span class="tag gray">Optional</span></div>`:`<div class="dayrow"><div><strong>Recovery day</strong><div class="small">Sunday rest; optional easy walk</div></div><span class="tag gray">Rest</span></div>`;
+ $('todayPlan').innerHTML=phtml+`<div class="dayrow"><span class="muted">Walking target</span><strong>90 minutes</strong></div><div class="dayrow"><span class="muted">Estimated activity burn</span><strong>${fmt(burn.walk+burn.run+burn.strength)} kcal</strong></div>`;
+ let done=Object.values(data.sessionDone).filter(Boolean).length;$('sessionCount').textContent=done+' / 40';$('sessionBar').style.width=Math.min(100,done/40*100)+'%';
+ let change=dateWeight(d)-data.profile.startWeight;$('weightChange').textContent=(change>0?'+':'')+change.toFixed(1)+' kg';
+ $('todayFood').innerHTML=ft.items.length?ft.items.map(x=>`<div class="dayrow"><span>${esc(x.name)} <span class="tag ${x.status==='Planned'?'orange':''}">${x.status}</span></span><strong>${fmt(x.kcal)} kcal</strong></div>`).join(''):'<div class="empty">No food entries for this date.</div>';
+ let start=data.profile.startDate;let rows='';for(let w=1;w<=8;w++){let core=0,runs=0;for(let i=0;i<7;i++){let date=addDays(start,(w-1)*7+i),pl=planFor(date);if(pl[0]==='Strength'&&data.sessionDone[date+'-'+pl[1]])core++;if(pl[0]==='Run'&&activityFor(date).runDone==='Yes')runs++}rows+=`<div class="dayrow"><span>Week ${w}</span><span class="small">${core}/3 strength · ${runs}/2 runs</span><strong>${core+runs}/5</strong></div>`}$('weeklyProgress').innerHTML=rows;
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+let selectedWorkout='A';
+function renderWorkout(){
+ let tabs=Object.keys(workouts);$('workoutTabs').innerHTML=tabs.map(k=>`<button class="${selectedWorkout===k?'active':''}" data-w="${k}">${workouts[k].name}</button>`).join('');document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{selectedWorkout=b.dataset.w;renderWorkout()});
+ let d=$('workoutDate').value||today(),w=workouts[selectedWorkout];$('workoutTitle').textContent=w.name;$('workoutSub').textContent=w.day+' · '+(selectedWorkout==='D'?'Optional session':'35 minutes')+' · 3 sets: 12 / 10 / 8 reps';
+ $('exerciseList').innerHTML=`<div class="exercise small" style="font-weight:700"><span>Exercise</span><span>Set 1</span><span>Set 2</span><span>Set 3</span><span class="load">Load kg</span><span>Done</span></div>`+w.items.map((name,i)=>{let key=d+'-'+selectedWorkout+'-'+i,ex=data.exercises[key]||{};return `<div class="exercise ${ex.done?'done':''}"><span class="exname">${esc(name)}</span><input aria-label="Set 1 reps" type="number" value="${ex.r1??12}" data-ex="${key}" data-field="r1"><input aria-label="Set 2 reps" type="number" value="${ex.r2??10}" data-ex="${key}" data-field="r2"><input aria-label="Set 3 reps" type="number" value="${ex.r3??8}" data-ex="${key}" data-field="r3"><input class="load" aria-label="Load kg" type="number" step=".5" placeholder="kg" value="${ex.load??''}" data-ex="${key}" data-field="load"><input class="check" type="checkbox" ${ex.done?'checked':''} data-ex="${key}" data-field="done"></div>`}).join('');
+ $('exerciseList').querySelectorAll('[data-ex]').forEach(el=>el.addEventListener('change',()=>{let k=el.dataset.ex;data.exercises[k]=data.exercises[k]||{};data.exercises[k][el.dataset.field]=el.type==='checkbox'?el.checked:el.value;if(el.dataset.field==='done')el.closest('.exercise').classList.toggle('done',el.checked);save()}));
+ $('completeWorkout').textContent=data.sessionDone[d+'-'+selectedWorkout]?'Session completed ✓':'Mark session complete';
+}
+$('completeWorkout').onclick=()=>{let d=$('workoutDate').value||today(),key=d+'-'+selectedWorkout;if(selectedWorkout==='D'){data.sessionDone[key]=!data.sessionDone[key]}else{let all=workouts[selectedWorkout].items.every((_,i)=>data.exercises[d+'-'+selectedWorkout+'-'+i]?.done);if(!all){alert('Tick all six exercises before completing this core session.');return}data.sessionDone[key]=true;let a=activityFor(d);a.strengthDone='Yes';data.activities[d]=a}save();renderWorkout()};
+$('resetWorkout').onclick=()=>{let d=$('workoutDate').value||today();workouts[selectedWorkout].items.forEach((_,i)=>{let k=d+'-'+selectedWorkout+'-'+i;if(data.exercises[k])data.exercises[k].done=false});renderWorkout();save()};
+function renderSchedule(){let days=[['Monday','Workout A'],['Tuesday','Run · ~5 km'],['Wednesday','Workout B'],['Thursday','Run · ~5 km'],['Friday','Workout C'],['Saturday','Optional Workout D'],['Sunday','Rest']];$('schedule').innerHTML=days.map(([d,s])=>`<div class="dayrow"><strong>${d}</strong><span>${s}</span></div>`).join('')}
+function renderFood(){
+ let d=$('foodDate').value||today();$('intakeTarget').value=data.profile.target;let items=data.foods.map((x,i)=>({...x,i})).filter(x=>x.date===d);
+ $('foodEntries').innerHTML=items.length?items.map(x=>`<div class="food-row"><input aria-label="Food description" data-food="${x.i}" data-key="name" value="${esc(x.name)}"><input aria-label="Quantity" data-food="${x.i}" data-key="qty" value="${esc(x.qty)}"><input aria-label="Calories" data-food="${x.i}" data-key="kcal" type="number" value="${x.kcal}"><select data-food="${x.i}" data-key="status"><option ${x.status==='Consumed'?'selected':''}>Consumed</option><option ${x.status==='Planned'?'selected':''}>Planned</option></select><button class="delete" data-del="${x.i}">×</button></div>`).join(''):'<div class="empty">Nothing logged for this date yet. Add your first meal or drink.</div>';
+ $('foodEntries').querySelectorAll('[data-food]').forEach(el=>el.addEventListener('change',()=>{let x=data.foods[+el.dataset.food];x[el.dataset.key]=el.dataset.key==='kcal'?+el.value:el.value;save();renderFood()}));
+ $('foodEntries').querySelectorAll('[data-del]').forEach(el=>el.onclick=()=>{data.foods.splice(+el.dataset.del,1);save();renderFood()});
+ let total=foodTotals(d);$('foodTotal').value=fmt(total.consumed)+' consumed · '+fmt(total.planned)+' planned';
+}
+$('addFood').onclick=()=>{data.foods.push({date:$('foodDate').value||today(),name:'',qty:'',kcal:0,status:'Consumed'});save();renderFood()};
+$('intakeTarget').onchange=()=>{data.profile.target=+$('intakeTarget').value||1820;save()};
+function renderWeight(){
+ let sorted=data.weights.slice().sort((a,b)=>a.date.localeCompare(b.date)),latest=sorted.at(-1);$('wStart').textContent=data.profile.startWeight.toFixed(1)+' kg';$('wLatest').textContent=latest?latest.kg.toFixed(1)+' kg':'—';$('wChange').textContent=latest?((latest.kg-data.profile.startWeight)>0?'+':'')+(latest.kg-data.profile.startWeight).toFixed(1)+' kg':'—';
+ let canvas=$('weightChart'),ctx=canvas.getContext('2d'),ratio=window.devicePixelRatio||1,w=canvas.clientWidth,h=190;canvas.width=w*ratio;canvas.height=h*ratio;ctx.scale(ratio,ratio);ctx.clearRect(0,0,w,h);
+ if(sorted.length<2){ctx.fillStyle='#829087';ctx.font='13px system-ui';ctx.fillText('Add at least two weigh-ins to see your trend.',12,32)}else{let vals=sorted.map(x=>x.kg),min=Math.min(...vals)-.5,max=Math.max(...vals)+.5;let px=i=>20+i*(w-40)/(vals.length-1),py=v=>h-24-(v-min)/(max-min)*(h-50);ctx.strokeStyle='#dce4dd';ctx.lineWidth=1;for(let j=0;j<4;j++){let y=18+j*(h-45)/3;ctx.beginPath();ctx.moveTo(10,y);ctx.lineTo(w-10,y);ctx.stroke()}ctx.strokeStyle='#286348';ctx.lineWidth=3;ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(px(i),py(v)):ctx.moveTo(px(i),py(v)));ctx.stroke();vals.forEach((v,i)=>{ctx.fillStyle='#286348';ctx.beginPath();ctx.arc(px(i),py(v),4,0,Math.PI*2);ctx.fill()});ctx.fillStyle='#738078';ctx.font='11px system-ui';ctx.fillText(max.toFixed(1)+' kg',10,13);ctx.fillText(min.toFixed(1)+' kg',10,h-5)}
+ $('weightRows').innerHTML=sorted.slice().reverse().map((x,i)=>`<div class="dayrow"><span>${new Date(x.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span><strong>${x.kg.toFixed(1)} kg</strong><button class="delete" data-wdel="${x.date}">×</button></div>`).join('')||'<div class="empty">No weigh-ins yet.</div>';
+ $('weightRows').querySelectorAll('[data-wdel]').forEach(b=>b.onclick=()=>{data.weights=data.weights.filter(x=>x.date!==b.dataset.wdel);save();renderWeight()});
+}
+$('saveWeight').onclick=()=>{let d=$('weightDate').value||today(),kg=+$('weightValue').value;if(!kg||kg<30||kg>300){alert('Enter a valid weight in kg.');return}data.weights=data.weights.filter(x=>x.date!==d);data.weights.push({date:d,kg});save();renderWeight();$('weightValue').value=''};
+function renderActivityForm(){
+ let d=$('activityDate').value||today(),a=activityFor(d);['familyMinutes','familySpeed','treadmillMinutes','treadmillSpeed','runKm','runDone','strengthDone'].forEach(k=>$(k).value=a[k]??'');updateActivityEstimate();
+ let entries=Object.entries(data.activities).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,12);$('activityRows').innerHTML=entries.map(([date,a])=>{let b=burnFor(date);return `<div class="dayrow"><span><strong>${new Date(date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</strong><span class="small"> · Walk ${a.familyMinutes+a.treadmillMinutes} min · Run ${a.runDone==='Yes'?a.runKm+' km':'—'}</span></span><strong>${fmt(b.walk+b.run+b.strength)} kcal</strong></div>`}).join('')||'<div class="empty">No activity logged yet.</div>';
+}
+function updateActivityEstimate(){let a={familyMinutes:+$('familyMinutes').value,familySpeed:+$('familySpeed').value,treadmillMinutes:+$('treadmillMinutes').value,treadmillSpeed:+$('treadmillSpeed').value,runKm:+$('runKm').value,runDone:$('runDone').value,strengthDone:$('strengthDone').value};let kg=dateWeight($('activityDate').value||today());let walk=(a.familyMinutes*a.familySpeed/60+a.treadmillMinutes*a.treadmillSpeed/60)*kg*.67,run=(a.runDone==='Yes'?a.runKm*kg*.95:0),strength=a.strengthDone==='Yes'?210:0;$('activityBurn').value=fmt(walk+run+strength)+' kcal'}
+['familyMinutes','familySpeed','treadmillMinutes','treadmillSpeed','runKm','runDone','strengthDone'].forEach(k=>$(k).addEventListener('input',updateActivityEstimate));
+$('saveActivity').onclick=()=>{let d=$('activityDate').value||today();data.activities[d]={familyMinutes:+$('familyMinutes').value||0,familySpeed:+$('familySpeed').value||4,treadmillMinutes:+$('treadmillMinutes').value||0,treadmillSpeed:+$('treadmillSpeed').value||5,runKm:+$('runKm').value||0,runDone:$('runDone').value,strengthDone:$('strengthDone').value};save();renderActivityForm()};
+function renderSettings(){let p=data.profile;$('setStartWeight').value=p.startWeight;$('setHeight').value=p.height;$('setAge').value=p.age;$('setBaseline').value=p.baseline;$('setTarget').value=p.target;$('setStartDate').value=p.startDate}
+$('saveSettings').onclick=()=>{let p=data.profile;p.startWeight=+$('setStartWeight').value||98;p.height=+$('setHeight').value||189;p.age=+$('setAge').value||38;p.baseline=+$('setBaseline').value||2370;p.target=+$('setTarget').value||1820;p.startDate=$('setStartDate').value||'2026-11-09';save();alert('Settings saved.')};
+function exportData(){let blob=new Blob([JSON.stringify({app:'CutTrack',version:1,exportedAt:new Date().toISOString(),data},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cuttrack-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
+$('exportBtn').onclick=$('exportBtn2').onclick=exportData;
+$('importBtn').onclick=$('importBtn2').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let j=JSON.parse(await f.text());let incoming=j.data||j;if(!incoming.profile||!Array.isArray(incoming.foods))throw Error('Invalid backup');if(!confirm('Import this backup and replace the data currently in CutTrack?'))return;data={...structuredClone(defaults),...incoming,profile:{...defaults.profile,...incoming.profile}};save();if(currentUser)await pushCloudData();location.reload()}catch(err){alert('Could not import that file. Please choose a CutTrack JSON backup.')}e.target.value=''};
+$('clearData').onclick=async()=>{if(confirm('This permanently clears all CutTrack data stored in this browser. Export a backup first if you want to keep it.')){localStorage.removeItem('cuttrack_v1');data=structuredClone(defaults);save();if(currentUser)await pushCloudData();location.reload()}};
+$('dashDate').value=today();$('foodDate').value=today();$('workoutDate').value=today();$('weightDate').value=today();$('activityDate').value=today();
+$('dashDate').onchange=renderDashboard;$('foodDate').onchange=renderFood;$('workoutDate').onchange=renderWorkout;$('activityDate').onchange=renderActivityForm;
+renderSchedule();renderDashboard();renderWorkout();
+(async()=>{const {data:{session}}=await cloud.auth.getSession();if(session)await handleAuth(session);else setSyncState('Local mode · Sign in to sync between devices','off')})();
+</script>
+<script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
+</body>
+</html>

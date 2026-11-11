@@ -1,0 +1,11 @@
+{
+  "name": "CutTrack – Personal Fitness Tracker",
+  "short_name": "CutTrack",
+  "description": "Eight-week training, food and weight tracker",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f5f2",
+  "theme_color": "#286348",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
