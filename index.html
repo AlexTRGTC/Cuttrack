@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#286348">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Cuttrack">
 <link rel="manifest" href="manifest.webmanifest">
@@ -279,7 +280,7 @@ async function loadCloudData(){
  if(remote){data={...structuredClone(defaults),...remote.payload,profile:{...defaults.profile,...(remote.payload.profile||{})},workoutConfig:{...(remote.payload.workoutConfig||{})},workoutLoads:{...(remote.payload.workoutLoads||{})}};lastCloudUpdatedAt=remote.updated_at;localDirty=false;localStorage.setItem('cuttrack_v1',JSON.stringify(data));renderAll();setSyncState('Synced across your devices','ok','Last update '+new Date(remote.updated_at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}));}
  else{localDirty=true;await pushCloudData();}
 }
-function renderAll(){renderSchedule();renderDashboard();if($('workoutDate').value){selectedWorkout=workoutForDate($('workoutDate').value)}renderWorkout();if($('foodDate').value)renderFood();if($('weightDate').value)renderWeight();if($('activityDate').value)renderActivityForm();}
+function renderAll(){renderDashboard();if($('workoutDate').value){selectedWorkout=workoutForDate($('workoutDate').value)}renderWorkout();if($('foodDate').value)renderFood();if($('weightDate').value)renderWeight();if($('activityDate').value)renderActivityForm();}
 async function refreshCloudIfSafe(){if(!currentUser||!navigator.onLine||localDirty)return;try{await loadCloudData()}catch(e){setSyncState('Offline or sync unavailable · local data retained','off')}}
 async function handleAuth(session){
  currentUser=session?.user||null;
@@ -365,7 +366,6 @@ function renderWorkout(){
 }
 $('completeWorkout').onclick=()=>{let d=$('workoutDate').value||today(),key=d+'-'+selectedWorkout;if(data.sessionDone[key]){alert('This session is already marked complete. Use Reset checkboxes if you need to amend it.');return}if(!confirm('Mark every exercise in '+workouts[selectedWorkout].name+' as completed?'))return;workoutItems(selectedWorkout).forEach((_,i)=>{let k=d+'-'+selectedWorkout+'-'+i;data.exercises[k]=data.exercises[k]||{};data.exercises[k].done=true});data.sessionDone[key]=true;data.sessionSnapshots=data.sessionSnapshots||{};data.sessionSnapshots[key]=workoutItems(selectedWorkout).slice();workoutItems(selectedWorkout).forEach((_,i)=>{let ex=data.exercises[d+'-'+selectedWorkout+'-'+i];if(ex.load==null&&data.workoutLoads?.[selectedWorkout])ex.load=data.workoutLoads[selectedWorkout]});let a=activityFor(d);a.strengthDone='Yes';data.activities[d]=a;save();renderWorkout()};
 $('resetWorkout').onclick=()=>{let d=$('workoutDate').value||today();workoutItems(selectedWorkout).forEach((_,i)=>{let k=d+'-'+selectedWorkout+'-'+i;if(data.exercises[k])data.exercises[k].done=false});renderWorkout();save()};
-function renderSchedule(){let days=[['Monday','Workout A'],['Tuesday','Run · ~5 km'],['Wednesday','Workout B'],['Thursday','Run · ~5 km'],['Friday','Workout C'],['Saturday','Optional Workout D'],['Sunday','Rest']];$('schedule').innerHTML=days.map(([d,s])=>`<div class="dayrow"><strong>${d}</strong><span>${s}</span></div>`).join('')}
 function renderFood(){
  let d=$('foodDate').value||today();$('intakeTarget').value=data.profile.target;
  const cats=['Breakfast','Lunch','Dinner','Snacks','Extras'];
@@ -451,7 +451,7 @@ $('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let 
 $('clearData').onclick=async()=>{if(confirm('This permanently clears all Cuttrack data stored in this browser. Export a backup first if you want to keep it.')){localStorage.removeItem('cuttrack_v1');data=structuredClone(defaults);save();if(currentUser)await pushCloudData();location.reload()}};
 $('dashDate').value=today();$('foodDate').value=today();$('workoutDate').value=today();selectedWorkout=workoutForDate(today());$('weightDate').value=today();$('activityDate').value=today();
 $('trainingWeek').onchange=()=>{let current=$('workoutDate').value||today(),offset=Math.max(0,Math.min(6,new Date(current+'T12:00:00').getDay()===0?6:new Date(current+'T12:00:00').getDay()-1));$('workoutDate').value=addDays(data.profile.startDate,(+$('trainingWeek').value-1)*7+offset);renderWorkout()};$('dashDate').onchange=renderDashboard;$('foodDate').onchange=renderFood;$('workoutDate').onchange=()=>{selectedWorkout=workoutForDate($('workoutDate').value||today());renderWorkout()};$('activityDate').onchange=renderActivityForm;
-renderSchedule();renderDashboard();renderWorkout();
+renderDashboard();renderWorkout();
 (async()=>{const {data:{session}}=await cloud.auth.getSession();if(session)await handleAuth(session);else setSyncState('Local records on this device','off')})();
 </script>
 <script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
