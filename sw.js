@@ -1,10 +1,46 @@
-const CACHE='cuttrack-v7';
-const SDK='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js';
-const CORE=['./','./index.html','./manifest.webmanifest','./icon.svg'];
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(async cache=>{await cache.addAll(CORE);try{await cache.add(SDK)}catch(e){} }).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',event=>{
- const req=event.request;const url=new URL(req.url);
- if(req.method!=='GET'||url.hostname.includes('supabase.co'))return;
- if(url.origin===self.location.origin||url.hostname==='cdn.jsdelivr.net'){event.respondWith(caches.match(req).then(cached=>cached||fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put(req,copy));return res}).catch(()=>url.origin===self.location.origin?caches.match('./index.html'):Promise.reject(new Error('Offline SDK unavailable')))));}
+const CACHE = 'cuttrack-v10';
+const SDK = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js';
+const CORE = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
+
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(CORE);
+    try { await cache.add(SDK); } catch (error) { /* Online SDK can still load on demand. */ }
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.hostname.includes('supabase.co')) return;
+  if (url.origin !== self.location.origin && url.hostname !== 'cdn.jsdelivr.net') return;
+  event.respondWith((async () => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    try {
+      const response = await fetch(request);
+      if (response && response.ok) {
+        const copy = response.clone();
+        const cache = await caches.open(CACHE);
+        await cache.put(request, copy);
+      }
+      return response;
+    } catch (error) {
+      if (url.origin === self.location.origin) {
+        const fallback = await caches.match('./index.html');
+        if (fallback) return fallback;
+      }
+      throw error;
+    }
+  })());
 });
