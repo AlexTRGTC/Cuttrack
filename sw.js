@@ -1,46 +1,5 @@
-const CACHE = 'cuttrack-v10';
-const SDK = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
-
-self.addEventListener('install', event => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE);
-    await cache.addAll(CORE);
-    try { await cache.add(SDK); } catch (error) { /* Online SDK can still load on demand. */ }
-    await self.skipWaiting();
-  })());
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)));
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-  const url = new URL(request.url);
-  if (request.method !== 'GET' || url.hostname.includes('supabase.co')) return;
-  if (url.origin !== self.location.origin && url.hostname !== 'cdn.jsdelivr.net') return;
-  event.respondWith((async () => {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    try {
-      const response = await fetch(request);
-      if (response && response.ok) {
-        const copy = response.clone();
-        const cache = await caches.open(CACHE);
-        await cache.put(request, copy);
-      }
-      return response;
-    } catch (error) {
-      if (url.origin === self.location.origin) {
-        const fallback = await caches.match('./index.html');
-        if (fallback) return fallback;
-      }
-      throw error;
-    }
-  })());
-});
+const CACHE='cuttrack-v12';
+const ASSETS=['./','./index.html'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('cuttrack-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;const url=new URL(event.request.url);if(url.origin!==self.location.origin)return;event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response}).catch(()=>caches.match(event.request).then(cached=>cached||caches.match('./index.html'))))});
